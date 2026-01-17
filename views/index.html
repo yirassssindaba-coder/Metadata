@@ -1,34 +1,88 @@
 <!DOCTYPE html>
-
-<html>
-   <head>
-      <title>File Metadata</title>
-      <link rel="shortcut icon" href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png" type="image/x-icon"/>
-      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
-      <link href="/public/style.css" rel="stylesheet" type="text/css">
-   </head>
-
-   <body>
-      <div class="container">
-        <h1>API Project: File Metadata Microservice</h1>
-
-        <h2>Usage:</h2>
-        <p>
-          Please Upload a File ...
-        </p>
-        <div class="view">
-          <h3 id="output"></h3>
-          <form enctype="multipart/form-data" method="POST" action="/api/fileanalyse">
-            <input id="inputfield" type="file" name="upfile">
-            <input id="button" type="submit" value="Upload">
-          </form>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Metadata Analyzer</title>
+    <link rel="shortcut icon" href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png" type="image/x-icon"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/public/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <div class="status-badge">
+            <span class="dot"></span> Microservice Active
         </div>
-      </div>
-      <div class="footer">
-        <p>
-          by 
-          <a href="http://www.freecodecamp.com">freeCodeCamp</a>
-        </p>
-      </div>
-   </body>
+        
+        <h1 class="title">File Metadata Analyzer</h1>
+        <p class="subtitle">Upload any file to instantly extract its metadata including name, mime type, and precise size.</p>
+
+        <div class="card">
+            <form id="uploadForm" enctype="multipart/form-data" method="POST" action="/api/fileanalyse">
+                <div class="drop-zone" id="dropZone">
+                    <div class="upload-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2411 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 5C16 3.89543 15.1046 3 14 3H10C8.89543 3 8 3.89543 8 5V7H16V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <p class="drop-text">Click to upload or drag and drop</p>
+                    <p class="drop-hint">Supports any file type (up to 10MB)</p>
+                    <input type="file" name="upfile" id="upfile" class="file-input" required>
+                </div>
+                
+                <div id="fileInfo" class="file-info" style="display: none;">
+                    <span id="fileName"></span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Analyze File</button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            File Metadata Microservice • Fullstack Challenge
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('upfile');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => {
+            if (fileInput.files.length > 0) {
+                updateFileInfo(fileInput.files[0].name);
+            }
+        };
+
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        };
+
+        dropZone.ondragleave = () => {
+            dropZone.classList.remove('drag-over');
+        };
+
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileInfo(fileInput.files[0].name);
+            }
+        };
+
+        function updateFileInfo(name) {
+            fileName.textContent = 'Selected: ' + name;
+            fileInfo.style.display = 'block';
+        }
+    </script>
+</body>
 </html>
